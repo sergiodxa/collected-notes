@@ -1,0 +1,49 @@
+{
+  "name": "collected-notes",
+  "description": "API wrapper for Collected Notes",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "Sergio Xalambrí",
+  "module": "dist/client.esm.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "jest-fetch-mock": "^3.0.3",
+    "tsdx": "^0.13.2",
+    "tslib": "^2.0.0",
+    "typescript": "^3.9.5"
+  },
+  "dependencies": {},
+  "jest": {
+    "setupFilesAfterEnv": [
+      "./test/setup.ts"
+    ]
+  }
+}
