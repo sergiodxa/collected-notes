@@ -10,6 +10,9 @@ export interface Note {
   updated_at: string;
   visibility: string;
   url: string;
+  poster: string | null;
+  curated: boolean;
+  ordering: number;
 }
 
 export interface Site {
@@ -25,6 +28,8 @@ export interface Site {
   published: boolean;
   tinyletter: string;
   domain: string;
+  payment_platform: string | null;
+  is_premium: boolean;
 }
 
 export interface User {
