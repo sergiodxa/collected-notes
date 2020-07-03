@@ -150,6 +150,18 @@ const user = await cn.me();
 
 The returned user follows the `User` interface.
 
+### Reorder notes
+
+You can use the client to reorder your notes.
+
+```ts
+const siteId = 1;
+const notes: number[] = [2, 3, 1];
+const orderedIds = await cn.reorder(siteId, notes);
+```
+
+The returned orderedIds is an array of the ids in their new order, this will be the same as the notes argument.
+
 ### Site and Read
 
 The private client also comes with the `read` and `site` methods used to get only public data. These methods are exactly the same ones and are being returned only for convenience so you could use them as:
@@ -157,7 +169,7 @@ The private client also comes with the `read` and `site` methods used to get onl
 ```ts
 const { site, notes } = await cn.site('sergiodxa');
 const note = await cn.site('sergiodxa', 'using-collected-notes-as-cms', 'json');
-```
+````
 
 ## API Types
 
@@ -170,7 +182,7 @@ import { Note, Site, User } from 'collected-notes';
 You can then use them to type any function in case TS is not capable to get the type implicitely, below you can see the definitions:
 
 ```ts
-interface Note {
+export interface Note {
   id: number;
   site_id: number;
   user_id: number;
@@ -182,9 +194,12 @@ interface Note {
   updated_at: string;
   visibility: string;
   url: string;
+  poster: string | null;
+  curated: boolean;
+  ordering: number;
 }
 
-interface Site {
+export interface Site {
   id: number;
   user_id: number;
   name: string;
@@ -197,9 +212,11 @@ interface Site {
   published: boolean;
   tinyletter: string;
   domain: string;
+  payment_platform: string | null;
+  is_premium: boolean;
 }
 
-interface User {
+export interface User {
   id: number;
   email: string;
   name: string;
