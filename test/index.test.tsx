@@ -20,6 +20,9 @@ const fakeNote: Note = {
   updated_at: new Date().toJSON(),
   visibility: 'public',
   url: 'https://collectednotes.com/famoso/my-title',
+  curated: false,
+  poster: null,
+  ordering: 1,
 };
 
 const fakeSite: Site = {
@@ -35,6 +38,8 @@ const fakeSite: Site = {
   published: true,
   tinyletter: '',
   domain: '',
+  payment_platform: null,
+  is_premium: true,
 };
 
 const fakeUser: User = {
@@ -130,5 +135,10 @@ describe(collectedNotes, () => {
   test('should get the user data', () => {
     fetchMock.once(JSON.stringify(fakeUser));
     expect(cn.me()).resolves.toEqual(fakeUser);
+  });
+
+  test('should reorder notes', () => {
+    fetchMock.once(JSON.stringify([2, 3, 1]));
+    expect(cn.reorder(1, [2, 3, 1])).resolves.toEqual([2, 3, 1]);
   });
 });

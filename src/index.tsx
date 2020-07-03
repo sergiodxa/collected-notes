@@ -63,6 +63,7 @@ export interface CollectedNotesClient {
   ): Promise<Note>;
   destroy(site: number, note: number): Promise<Response>;
   me(): Promise<User>;
+  reorder(site: number, notes: number[]): Promise<number[]>;
   site(path: string): Promise<{ site: Site; notes: Note[] }>;
   read(
     site: string,
@@ -174,7 +175,29 @@ export function collectedNotes(
     return response.json();
   }
 
-  return { latestNotes, sites, site, create, read, update, destroy, me };
+  async function reorder(site: number, notes: number[]): Promise<number[]> {
+    const response = await fetch(
+      `https://collectednotes.com/sites/${site}/notes/reorder`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ ids: notes }),
+      }
+    );
+    return response.json();
+  }
+
+  return {
+    latestNotes,
+    sites,
+    site,
+    create,
+    read,
+    update,
+    destroy,
+    me,
+    reorder,
+  };
 }
 
 export async function site(
