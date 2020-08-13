@@ -72,16 +72,6 @@ export interface CollectedNotesClient {
   ): Promise<Note | string>;
 }
 
-export class CNError extends Error {
-  constructor(message?: string) {
-    super(message);
-    Object.setPrototypeOf(this, CNError.prototype);
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, CNError);
-    }
-  }
-}
-
 export function collectedNotes(
   email: string,
   token: string
@@ -91,14 +81,6 @@ export function collectedNotes(
     Accept: 'application/json',
     'Content-Type': 'application/json',
   };
-
-  function validateBody(body: string) {
-    if (!body.startsWith('# '))
-      throw new CNError(
-        'The body must start with `# ` to correctly detect the title and generate the slug.'
-      );
-    return;
-  }
 
   async function latestNotes(site: number): Promise<Note[]> {
     const response = await fetch(
@@ -125,7 +107,6 @@ export function collectedNotes(
       visibility: 'private' | 'public';
     }
   ): Promise<Note> {
-    validateBody(body);
     const response = await fetch(
       `https://collectednotes.com/sites/${site}/notes`,
       {
@@ -148,7 +129,6 @@ export function collectedNotes(
       visibility: 'private' | 'public';
     }
   ): Promise<Note> {
-    validateBody(body);
     const response = await fetch(
       `https://collectednotes.com/sites/${site}/notes/${note}`,
       {
@@ -232,19 +212,19 @@ export async function read(
       const response = await fetch(
         `https://collectednotes.com/${site}/${note}.json`
       );
-      return response.json();
+      return await response.json();
     }
     case 'md': {
       const response = await fetch(
         `https://collectednotes.com/${site}/${note}.md`
       );
-      return response.text();
+      return await response.text();
     }
     case 'txt': {
       const response = await fetch(
         `https://collectednotes.com/${site}/${note}.text`
       );
-      return response.text();
+      return await response.text();
     }
   }
 }
