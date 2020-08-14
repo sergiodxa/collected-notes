@@ -1,4 +1,7 @@
-export interface Note {
+export type NoteVisibility = 'private' | 'public' | 'public_unlisted';
+export type NoteFormat = 'md' | 'txt' | 'json';
+
+export type Note = {
   id: number;
   site_id: number;
   user_id: number;
@@ -8,14 +11,14 @@ export interface Note {
   title: string;
   created_at: string;
   updated_at: string;
-  visibility: string;
+  visibility: NoteVisibility;
   url: string;
   poster: string | null;
   curated: boolean;
   ordering: number;
-}
+};
 
-export interface Site {
+export type Site = {
   id: number;
   user_id: number;
   name: string;
@@ -30,9 +33,9 @@ export interface Site {
   domain: string;
   payment_platform: string | null;
   is_premium: boolean;
-}
+};
 
-export interface User {
+export type User = {
   id: number;
   email: string;
   name: string;
@@ -41,16 +44,39 @@ export interface User {
   avatar_key: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CollectedNotesClient {
+export type WebhookNoteUpdated = {
+  event: 'note-updated';
+  data: { note: Note };
+};
+export type WebhookNoteCreated = {
+  event: 'note-created';
+  data: { note: Note };
+};
+export type WebhookNoteDeleted = {
+  event: 'note-deleted';
+  data: { note: Note };
+};
+export type WebhookNotesReordered = {
+  event: 'note-reordered';
+  data: { notes: Note[] };
+};
+
+export type WebhookEvent =
+  | WebhookNoteUpdated
+  | WebhookNoteCreated
+  | WebhookNoteDeleted
+  | WebhookNotesReordered;
+
+export type CollectedNotesClient = {
   latestNotes(site: number): Promise<Note[]>;
   sites(): Promise<Site[]>;
   create(
     site: number,
     noteContent: {
       body: string;
-      visibility: 'private' | 'public';
+      visibility: NoteVisibility;
     }
   ): Promise<Note>;
   update(
@@ -58,19 +84,15 @@ export interface CollectedNotesClient {
     note: number,
     noteContent: {
       body: string;
-      visibility: 'private' | 'public';
+      visibility: NoteVisibility;
     }
   ): Promise<Note>;
   destroy(site: number, note: number): Promise<Response>;
   me(): Promise<User>;
   reorder(site: number, notes: number[]): Promise<number[]>;
   site(path: string): Promise<{ site: Site; notes: Note[] }>;
-  read(
-    site: string,
-    note: string,
-    format?: 'json' | 'md' | 'txt'
-  ): Promise<Note | string>;
-}
+  read(site: string, note: string, format?: NoteFormat): Promise<Note | string>;
+};
 
 export function collectedNotes(
   email: string,
@@ -99,13 +121,7 @@ export function collectedNotes(
 
   async function create(
     site: number,
-    {
-      body,
-      visibility = 'private',
-    }: {
-      body: string;
-      visibility: 'private' | 'public';
-    }
+    { body, visibility }: { body: string; visibility: NoteVisibility }
   ): Promise<Note> {
     const response = await fetch(
       `https://collectednotes.com/sites/${site}/notes`,
@@ -121,13 +137,7 @@ export function collectedNotes(
   async function update(
     site: number,
     note: number,
-    {
-      body,
-      visibility = 'private',
-    }: {
-      body: string;
-      visibility: 'private' | 'public';
-    }
+    { body, visibility }: { body: string; visibility: NoteVisibility }
   ): Promise<Note> {
     const response = await fetch(
       `https://collectednotes.com/sites/${site}/notes/${note}`,
@@ -177,7 +187,7 @@ export function collectedNotes(
     destroy,
     me,
     reorder,
-  };
+  } as const;
 }
 
 export async function site(
@@ -205,7 +215,7 @@ export async function read(
 export async function read(
   site: string,
   note: string,
-  format: 'json' | 'md' | 'txt' = 'json'
+  format: NoteFormat = 'json'
 ): Promise<Note | string> {
   switch (format) {
     case 'json': {
