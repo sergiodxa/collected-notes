@@ -4,7 +4,10 @@
 
 - TypeScript Support
 - Types for the API returned value
+- Types for webhook events
 - Public and private API support
+- JSDoc with full documentation
+- Zero-dependencies
 
 ## Getting Started
 
@@ -169,61 +172,47 @@ The private client also comes with the `read` and `site` methods used to get onl
 ```ts
 const { site, notes } = await cn.site('sergiodxa');
 const note = await cn.site('sergiodxa', 'using-collected-notes-as-cms', 'json');
-````
+```
 
-## API Types
+## Types
 
-You can also import the interfaces of the values returned by the API
+You can also import the interfaces of the values returned by the API or the webhooks.
 
 ```ts
-import { Note, Site, User } from 'collected-notes';
+import {
+  ID,
+  Markdown,
+  URL,
+  Email,
+  ISODate,
+  NoteVisibility,
+  NoteFormat,
+  Note,
+  Site,
+  User,
+  EventNoteUpdated,
+  EventNoteCreated,
+  EventNoteDeleted,
+  EventNotesReordered,
+  EventNotesReordered,
+  Event,
+} from 'collected-notes';
 ```
 
 You can then use them to type any function in case TS is not capable to get the type implicitely, below you can see the definitions:
 
-```ts
-export interface Note {
-  id: number;
-  site_id: number;
-  user_id: number;
-  body: string;
-  path: string;
-  headline: string;
-  title: string;
-  created_at: string;
-  updated_at: string;
-  visibility: string;
-  url: string;
-  poster: string | null;
-  curated: boolean;
-  ordering: number;
-}
-
-export interface Site {
-  id: number;
-  user_id: number;
-  name: string;
-  headline: string;
-  about: string;
-  host: any;
-  created_at: string;
-  updated_at: string;
-  site_path: string;
-  published: boolean;
-  tinyletter: string;
-  domain: string;
-  payment_platform: string | null;
-  is_premium: boolean;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-  role: string;
-  banned: boolean;
-  avatar_key: string;
-  created_at: string;
-  updated_at: string;
-}
-```
+- `ID` — alias of number
+- `Markdown` — alias of string
+- `URL` — alias of string
+- `Email` — alias of string
+- `ISODate` — alias of string
+- `NoteVisibility` — union of strings
+- `NoteFormat` — union of strings
+- `Note` — The type of a note
+- `Site` — The type of a site
+- `User` — The type of a user
+- `EventNoteUpdated` — The type of the note updated event
+- `EventNoteCreated` — The type of the note created event
+- `EventNoteDeleted` — The type of the note deleted event
+- `EventNotesReordered` — The type of the notes reordered event
+- `Event` — union of other Webhook-types

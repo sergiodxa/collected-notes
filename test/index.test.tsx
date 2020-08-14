@@ -1,12 +1,4 @@
-import {
-  collectedNotes,
-  read,
-  site,
-  CollectedNotesClient,
-  Note,
-  Site,
-  User,
-} from '../src';
+import { collectedNotes, read, site, Note, Site, User } from '../src';
 
 const fakeNote: Note = {
   id: 1,
@@ -38,6 +30,7 @@ const fakeSite: Site = {
   published: true,
   tinyletter: '',
   domain: '',
+  webhook_url: '',
   payment_platform: null,
   is_premium: true,
 };
@@ -90,7 +83,7 @@ describe(read, () => {
 });
 
 describe(collectedNotes, () => {
-  let cn: CollectedNotesClient;
+  let cn: ReturnType<typeof collectedNotes>;
   beforeEach(() => {
     cn = collectedNotes('your@email.com', 'secret-token');
     jest.restoreAllMocks();
