@@ -103,10 +103,13 @@ describe(collectedNotes, () => {
   test('should create a note', () => {
     fetchMock.once(JSON.stringify(fakeNote));
     expect(
-      cn.create(1, {
-        body: '# My title\nThis is a **test** note',
-        visibility: 'public',
-      })
+      cn.create(
+        {
+          body: '# My title\nThis is a **test** note',
+          visibility: 'public',
+        },
+        1
+      )
     ).resolves.toEqual(fakeNote);
   });
 
