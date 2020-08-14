@@ -292,7 +292,7 @@ export function collectedNotes(email: Email, token: string) {
    * @param {number} [page=1] - The page of the results, by default is `1`
    * @returns {Promise<Note[]>} - The list of notes
    */
-  async function latestNotes(siteId: ID, page = 1): Promise<Note[]> {
+  async function latestNotes(siteId: ID, page: number = 1): Promise<Note[]> {
     const response = await fetch(
       `https://collectednotes.com/sites/${siteId}/notes?page=${page}`,
       { headers }
@@ -430,7 +430,11 @@ export function collectedNotes(email: Email, token: string) {
    * @param {number} [page=1] - The page of the results, by default is `1`
    * @returns {Promise<Note[]>} - The list of notes matching the search term
    */
-  async function search(siteId: ID, term: string, page = 1): Promise<Note[]> {
+  async function search(
+    siteId: ID,
+    term: string,
+    page: number = 1
+  ): Promise<Note[]> {
     const response = await fetch(
       `https://collectednotes.com/sites/${siteId}/notes/search?term=${encodeURI(
         term

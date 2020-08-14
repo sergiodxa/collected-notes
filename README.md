@@ -91,7 +91,8 @@ You can now get the latest notes, public and private, of a site based on their I
 
 ```ts
 const siteId = 1;
-const notes = await cn.latestNotes(siteId);
+const page = 1; // default is 1
+const notes = await cn.latestNotes(siteId, page);
 ```
 
 Each note of the list follows the `Note` interface.
@@ -101,12 +102,12 @@ Each note of the list follows the `Note` interface.
 You can use the client to create a new note for a site of the user:
 
 ```ts
-const siteId = 1;
+const siteId = 1; // optional, if missing the API will use your first site
 const noteContent = {
   body: '# Title\nContent of the note.',
   visiblity: 'private',
 };
-const note = await cn.create(siteId, noteContent);
+const note = await cn.create(noteContent, siteId);
 ```
 
 The returned note follows the `Note` interface.
@@ -138,7 +139,7 @@ You can use the client to delete a note:
 ```ts
 const siteId = 1;
 const noteId = 2;
-const response = await cn.destroy(siteId, noteId);
+await cn.destroy(siteId, noteId);
 ```
 
 The returned response is the same returned by the Fetch API, you can use `response.ok` or `response.statusCode` to check if the delete was successful.
@@ -164,6 +165,17 @@ const orderedIds = await cn.reorder(siteId, notes);
 ```
 
 The returned orderedIds is an array of the ids in their new order, this will be the same as the notes argument.
+
+### Search
+
+You can use the client to search your notes.
+
+```ts
+const siteId = 1;
+const term = "new content";
+const page = 1; // default is 1
+const notes = await cn.search(siteId, term, page);
+```
 
 ### Site and Read
 
