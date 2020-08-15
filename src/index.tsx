@@ -474,7 +474,7 @@ export function collectedNotes(email: Email, token: string) {
 export async function site(
   sitePath: string
 ): Promise<{ site: Site; notes: Note[] }> {
-  const response = await fetch(`https://collectednotes.com/${sitePath}`);
+  const response = await fetch(`https://collectednotes.com/${sitePath}.json`);
   return await response.json();
 }
 
