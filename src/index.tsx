@@ -269,6 +269,17 @@ export type Event =
   | EventNoteDeleted
   | EventNotesReordered;
 
+export type Link = {
+  id: ID;
+  note_id: ID;
+  url: URL;
+  kind: string;
+  host: string;
+  title: string;
+  created_at: ISODate;
+  updated_at: ISODate;
+};
+
 /**
  * Create a new client of the API to consume the private endpoints.
  *
@@ -479,13 +490,19 @@ export function collectedNotes(email: Email, token: string) {
    * @param {ID} siteId - The site ID, you can get it using the `sites` method
    * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
    * @param {('json' | 'html')} [format='json'] - The format you want to get the notes
-   * @returns {Promise<unknown>}
+   * @returns {Promise<Link[] | HTML>}
    */
   async function links(
     siteId: ID,
     noteId: ID,
+    format?: 'json'
+  ): Promise<Link[]>;
+  async function links(siteId: ID, noteId: ID, format: 'html'): Promise<HTML>;
+  async function links(
+    siteId: ID,
+    noteId: ID,
     format: 'json' | 'html' = 'json'
-  ): Promise<unknown> {
+  ): Promise<Link[] | HTML> {
     const response = await fetch(
       `https://collectednotes.com/sites/${siteId}/notes/${noteId}/links${
         format === 'json' ? '.json' : ''

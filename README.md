@@ -177,6 +177,14 @@ const page = 1; // default is 1
 const notes = await cn.search(siteId, term, page);
 ```
 
+### Body
+
+TBD
+
+### Links
+
+TBD
+
 ### Site and Read
 
 The private client also comes with the `read` and `site` methods used to get only public data. These methods are exactly the same ones and are being returned only for convenience so you could use them as:
@@ -202,6 +210,7 @@ import {
   Note,
   Site,
   User,
+  Link,
   EventNoteUpdated,
   EventNoteCreated,
   EventNoteDeleted,
@@ -223,6 +232,7 @@ You can then use them to type any function in case TS is not capable to get the 
 - `Note` — The type of a note
 - `Site` — The type of a site
 - `User` — The type of a user
+- `Link` — The type of a link inside a note
 - `EventNoteUpdated` — The type of the note updated event
 - `EventNoteCreated` — The type of the note created event
 - `EventNoteDeleted` — The type of the note deleted event
