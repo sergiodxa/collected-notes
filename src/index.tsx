@@ -470,6 +470,31 @@ export function collectedNotes(email: Email, token: string) {
     return await response.json();
   }
 
+  /**
+   * Get the list of links that are contained in a note.
+   *
+   * @private
+   * @function
+   * @async
+   * @param {ID} siteId - The site ID, you can get it using the `sites` method
+   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @param {('json' | 'html')} [format='json'] - The format you want to get the notes
+   * @returns {Promise<unknown>}
+   */
+  async function links(
+    siteId: ID,
+    noteId: ID,
+    format: 'json' | 'html' = 'json'
+  ): Promise<unknown> {
+    const response = await fetch(
+      `https://collectednotes.com/sites/${siteId}/notes/${noteId}/links${
+        format === 'json' ? '.json' : ''
+      }`,
+      { method: 'GET', headers }
+    );
+    return await response.json();
+  }
+
   return {
     latestNotes,
     sites,
@@ -482,6 +507,7 @@ export function collectedNotes(email: Email, token: string) {
     reorder,
     search,
     body,
+    links,
   } as const;
 }
 
