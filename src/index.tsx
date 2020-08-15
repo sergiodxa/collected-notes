@@ -273,7 +273,7 @@ export type Link = {
   id: ID;
   note_id: ID;
   url: URL;
-  kind: string;
+  kind: 'internal' | 'external';
   host: string;
   title: string;
   created_at: ISODate;
