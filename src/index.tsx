@@ -11,6 +11,12 @@ export type ID = number;
 export type Markdown = string;
 
 /**
+ * A string containing HTML
+ * @export
+ */
+export type HTML = string;
+
+/**
  * A valid URL string.
  * @export
  */
@@ -374,7 +380,7 @@ export function collectedNotes(email: Email, token: string) {
    * @function
    * @async
    * @param {ID} siteId - The ID of the site, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods.
+   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
    * @returns {Promise<void>} - This method returns nothing
    */
   async function destroy(siteId: ID, noteId: ID): Promise<void> {
@@ -439,10 +445,27 @@ export function collectedNotes(email: Email, token: string) {
       `https://collectednotes.com/sites/${siteId}/notes/search?term=${encodeURI(
         term
       )}&page=${page}`,
-      {
-        method: 'GET',
-        headers,
-      }
+      { method: 'GET', headers }
+    );
+    return await response.json();
+  }
+
+  /**
+   * Get a note with the body rendered as HTML.
+   *
+   * @function
+   * @async
+   * @param {ID} siteId - The site ID, you can get it using the `sites` method
+   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @returns {Promise<{ note:Note, body:HTML }>} - The note together with the HTML already parsed
+   */
+  async function body(
+    siteId: ID,
+    noteId: ID
+  ): Promise<{ note: Note; body: HTML }> {
+    const response = await fetch(
+      `https://collectednotes.com/sites/${siteId}/notes/${noteId}/body`,
+      { method: 'GET', headers }
     );
     return await response.json();
   }
@@ -458,6 +481,7 @@ export function collectedNotes(email: Email, token: string) {
     me,
     reorder,
     search,
+    body,
   } as const;
 }
 
