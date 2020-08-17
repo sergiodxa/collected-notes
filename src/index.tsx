@@ -531,17 +531,22 @@ export function collectedNotes(email: Email, token: string) {
 /**
  * Get the data of a site and their public notes.
  * This method is public and doesn't require authentication.
+ * _This API is paginated._
  *
  * @export
  * @function
  * @async
  * @param {string} sitePath - The path of the site (e.g. `blog`)
+ * @param {number} [page=1] - The page of the results, by default is `1`
  * @returns {Promise<{ site: Site; notes: Note[] }>} - An object with the site and the list of notes
  */
 export async function site(
-  sitePath: string
+  sitePath: string,
+  page: number = 1
 ): Promise<{ site: Site; notes: Note[] }> {
-  const response = await fetch(`https://collectednotes.com/${sitePath}.json`);
+  const response = await fetch(
+    `https://collectednotes.com/${sitePath}.json?page=${page}`
+  );
   return await response.json();
 }
 
