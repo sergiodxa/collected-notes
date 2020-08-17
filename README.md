@@ -56,7 +56,9 @@ The returned note will be a string with the note content as plain text, without 
 Use it to get a site data with their public notes.
 
 ```ts
-const siteData = await site('sergiodxa');
+const sitePath = 'sergiodxa';
+const page = 1;
+const siteData = await site(sitePath, page);
 ```
 
 The return value will be an object with the format:
@@ -172,7 +174,7 @@ You can use the client to search your notes.
 
 ```ts
 const siteId = 1;
-const term = "new content";
+const term = 'new content';
 const page = 1; // default is 1
 const notes = await cn.search(siteId, term, page);
 ```
