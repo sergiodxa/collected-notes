@@ -200,6 +200,11 @@ export type Site = {
    * @type {boolean}
    */
   is_premium: boolean;
+  /**
+   * The total number of **public** notes on the site.
+   * @type {number}
+   */
+  total_notes: number;
 };
 
 export type User = {
