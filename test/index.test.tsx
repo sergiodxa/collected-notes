@@ -33,6 +33,7 @@ const fakeSite: Site = {
   webhook_url: '',
   payment_platform: null,
   is_premium: true,
+  total_notes: 1,
 };
 
 const fakeUser: User = {
