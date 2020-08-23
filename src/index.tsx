@@ -516,7 +516,9 @@ export function collectedNotes(email: Email, token: string) {
   }
 
   /**
-   * Search notes for a website.
+   * Search notes for a website. When using the `visibility` option it will only
+   * search within your notes with the specified visibility, when it's not
+   * defined it will search within all your notes.
    * _This API is paginated._
    *
    * @function
@@ -524,19 +526,21 @@ export function collectedNotes(email: Email, token: string) {
    * @param {string} sitePath - The path of the site, e.g. `blog`
    * @param {string} term - The search term, it will be encoded as a valid URI
    * @param {number} [page=1] - The page of the results, by default is `1`
+   * @param {NoteVisibility} [visibility] - The visibility of the notes your are trying to search for
    * @returns {Promise<Note[]>} - The list of notes matching the search term
    */
   async function search(
     sitePath: string,
     term: string,
-    page: number = 1
+    page: number = 1,
+    visibility?: NoteVisibility
   ): Promise<Note[]> {
-    const response = await fetch(
-      `https://collectednotes.com/sites/${sitePath}/notes/search?term=${encodeURI(
-        term
-      )}&page=${page}`,
-      { method: 'GET', headers }
-    );
+    const encodedTerm = encodeURI(term);
+    const url = visibility
+      ? `https://collectednotes.com/sites/${sitePath}/notes/search?term=${encodedTerm}&page=${page}&visibility=${visibility}`
+      : `https://collectednotes.com/sites/${sitePath}/notes/search?term=${encodedTerm}&page=${page}`;
+
+    const response = await fetch(url, { method: 'GET', headers });
     return await response.json();
   }
 
