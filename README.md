@@ -173,10 +173,10 @@ The returned orderedIds is an array of the ids in their new order, this will be 
 You can use the client to search your notes.
 
 ```ts
-const siteId = 1;
+const sitePath = "blog";
 const term = 'new content';
 const page = 1; // default is 1
-const notes = await cn.search(siteId, term, page);
+const notes = await cn.search(sitePath, term, page);
 ```
 
 ### Body

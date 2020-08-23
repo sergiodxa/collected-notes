@@ -53,8 +53,6 @@ export type NoteFormat = 'md' | 'txt' | 'json';
  *
  * It has an author (`user_id`) and belongs to a site (`site_id`) and a `body`
  * with the content of the note.
- *
- * Notes can also have different
  * @export
  */
 export type Note = {
@@ -131,6 +129,14 @@ export type Note = {
   ordering: number;
 };
 
+/**
+ * A site inside Collected Notes.
+ *
+ * Sites belong to users, but a user can have more than one site.
+ *
+ * A site is where all notes written by a user are grouped.
+ * @export
+ */
 export type Site = {
   /**
    *The ID of the site itself.
@@ -274,14 +280,61 @@ export type Event =
   | EventNoteDeleted
   | EventNotesReordered;
 
+/**
+ * A link detected by Collected Notes in the body of a note.
+ *
+ * They are differentiated based on the domain if they are internal or external.
+ *
+ * A link is marked as internal when the domain is Collected Notes and as an
+ * external link when the domain is outside Collected Notes.
+ */
 export type Link = {
+  /**
+   * The unique identified of the link.
+   * @type {ID}
+   */
   id: ID;
+  /**
+   * The ID of the note the link belongs to.
+   * @type {ID}
+   */
   note_id: ID;
+  /**
+   * The full URL of the link.
+   * @type {URL}
+   */
   url: URL;
+  /**
+   * The kind of link.
+   * A link is marked as internal when the domain is Collected Notes and as an
+   * external link when the domain is outside Collected Notes.
+   * @type {('internal' | 'external')}
+   */
   kind: 'internal' | 'external';
+  /**
+   * The host (domain) of the link, this is used in the Collected Notes website
+   * to highlight it from the rest of the URL.
+   *
+   * @type {string}
+   */
   host: string;
+  /**
+   * The title of the note, in Markdown the title is defined as:
+   *   `[text with link](url "title")`
+   * Note how the linked text is not the same as the title.
+   * This will be an empty string if the title is not defined.
+   * @type {string}
+   */
   title: string;
+  /**
+   * The creation date of the link.
+   * @type {ISODate} - The date in ISO-8601
+   */
   created_at: ISODate;
+  /**
+   * The date of the last update of the link.
+   * @type {ISODate} - The date in ISO-8601
+   */
   updated_at: ISODate;
 };
 
@@ -306,6 +359,9 @@ export function collectedNotes(email: Email, token: string) {
 
   /**
    * Get the latest notes of a Collected Notes site.
+   *
+   * The notes returned by this method includes the private and unlisted notes.
+   * To get only the public notes you can use the `site` method.
    * _This API is paginated._
    *
    * @function
@@ -369,7 +425,7 @@ export function collectedNotes(email: Email, token: string) {
    * @function
    * @async
    * @param {ID} siteId - The ID of the site, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, or `search` methods
+   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, or `search` methods
    * @param {{ body: string; visibility: NoteVisibility }} note - The new body and visibility of the note
    * @returns {Promise<Note>} - The updated note data
    */
@@ -396,7 +452,7 @@ export function collectedNotes(email: Email, token: string) {
    * @function
    * @async
    * @param {ID} siteId - The ID of the site, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
    * @returns {Promise<void>} - This method returns nothing
    */
   async function destroy(siteId: ID, noteId: ID): Promise<void> {
@@ -472,7 +528,7 @@ export function collectedNotes(email: Email, token: string) {
    * @function
    * @async
    * @param {ID} siteId - The site ID, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
    * @returns {Promise<{ note:Note, body:HTML }>} - The note together with the HTML already parsed
    */
   async function body(
@@ -493,7 +549,7 @@ export function collectedNotes(email: Email, token: string) {
    * @function
    * @async
    * @param {ID} siteId - The site ID, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the site, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
    * @param {('json' | 'html')} [format='json'] - The format you want to get the notes
    * @returns {Promise<Link[] | HTML>}
    */
