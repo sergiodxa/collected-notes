@@ -58,7 +58,8 @@ Use it to get a site data with their public notes.
 ```ts
 const sitePath = 'sergiodxa';
 const page = 1;
-const siteData = await site(sitePath, page);
+const visibility = "public";
+const siteData = await site(sitePath, page, visibility);
 ```
 
 The return value will be an object with the format:

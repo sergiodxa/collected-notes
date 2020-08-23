@@ -36,9 +36,27 @@ export type ISODate = string;
 
 /**
  * The posible visibility of a note.
+ *
+ * A `private` note is only visible for the author when it's logged-in inside
+ * Collected Noted
+ *
+ * A `public` note is visible to everyone and appears on your Collected Noted
+ * site.
+ *
+ * A `public_unlisted` note is not listed on your Collected Noted site but it
+ * can be accessed by anyone with the link.
+ *
+ * A `site_public` is only visible through the API when a custom domain is set.
+ * This notes will not appear on your Collected Noted site.
+ * This visibility
+ * option is only available when your site has a custom domain.
  * @export
  */
-export type NoteVisibility = 'private' | 'public' | 'public_unlisted';
+export type NoteVisibility =
+  | 'private'
+  | 'public'
+  | 'public_unlisted'
+  | 'site_public';
 
 /**
  * The format a note can come in.
@@ -545,7 +563,6 @@ export function collectedNotes(email: Email, token: string) {
   /**
    * Get the list of links that are contained in a note.
    *
-   * @private
    * @function
    * @async
    * @param {ID} siteId - The site ID, you can get it using the `sites` method
@@ -599,14 +616,16 @@ export function collectedNotes(email: Email, token: string) {
  * @async
  * @param {string} sitePath - The path of the site (e.g. `blog`)
  * @param {number} [page=1] - The page of the results, by default is `1`
+ * @param {("public" | "site_public")} [visibility="public"] - The visibility of the notes you are trying to fetch.
  * @returns {Promise<{ site: Site; notes: Note[] }>} - An object with the site and the list of notes
  */
 export async function site(
   sitePath: string,
-  page: number = 1
+  page: number = 1,
+  visibility: Extract<NoteVisibility, 'public' | 'site_public'> = 'public'
 ): Promise<{ site: Site; notes: Note[] }> {
   const response = await fetch(
-    `https://collectednotes.com/${sitePath}.json?page=${page}`
+    `https://collectednotes.com/${sitePath}.json?page=${page}&visibility=${visibility}`
   );
   return await response.json();
 }
