@@ -447,18 +447,18 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {ID} siteId - The site ID, you can get it using the `sites` method
+   * @param {string} sitePath - The path of the site, e.g. `blog`
    * @param {string} term - The search term, it will be encoded as a valid URI
    * @param {number} [page=1] - The page of the results, by default is `1`
    * @returns {Promise<Note[]>} - The list of notes matching the search term
    */
   async function search(
-    siteId: ID,
+    sitePath: string,
     term: string,
     page: number = 1
   ): Promise<Note[]> {
     const response = await fetch(
-      `https://collectednotes.com/sites/${siteId}/notes/search?term=${encodeURI(
+      `https://collectednotes.com/sites/${sitePath}/notes/search?term=${encodeURI(
         term
       )}&page=${page}`,
       { method: 'GET', headers }
