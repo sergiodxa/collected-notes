@@ -177,16 +177,30 @@ You can use the client to search your notes.
 const sitePath = "blog";
 const term = 'new content';
 const page = 1; // default is 1
-const notes = await cn.search(sitePath, term, page);
+const visibility = "public"; // default is not defined
+const notes = await cn.search(sitePath, term, page, visibility);
 ```
 
 ### Body
 
-TBD
+Get the rendered body of a note. This method is useful when you don't want to get the markdown or when you want to use custom Markdown syntax supported by Collected Notes (e.g. to embed [YouTube videos](https://collectednotes.com/blog/support-for-youtube) or [Tweets](https://collectednotes.com/blog/support-for-tweets))
+
+```ts
+const siteId = 1;
+const noteId = 2;
+const { note, body } = await cn.body(siteId, noteId);
+```
 
 ### Links
 
-TBD
+Get the list of links that are contained in a note.
+
+```ts
+const siteId = 1;
+const noteId = 2;
+const format = "json"; // or html, defualt is json
+const links = await cn.links(siteId, noteId, format);
+```
 
 ### Site and Read
 
