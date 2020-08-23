@@ -1,7 +1,7 @@
 {
   "name": "collected-notes",
   "description": "API wrapper for Collected Notes",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "license": "MIT",
   "author": "Sergio Xalambrí",
   "module": "dist/client.esm.js",
