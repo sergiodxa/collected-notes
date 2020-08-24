@@ -93,7 +93,7 @@ describe(collectedNotes, () => {
 
   test('should get last notes', () => {
     fetchMock.once(JSON.stringify([fakeNote]));
-    expect(cn.latestNotes(1)).resolves.toEqual([fakeNote]);
+    expect(cn.latestNotes('esacrosa')).resolves.toEqual([fakeNote]);
   });
 
   test('should get user sites', () => {
@@ -117,7 +117,7 @@ describe(collectedNotes, () => {
   test('should update a note', () => {
     fetchMock.once(JSON.stringify(fakeNote));
     expect(
-      cn.update(1, 1, {
+      cn.update('esacrosa', 'api', {
         body: '# My title\nThis is a **test** note',
         visibility: 'public',
       })
@@ -126,7 +126,7 @@ describe(collectedNotes, () => {
 
   test('should destroy a note', () => {
     fetchMock.once('');
-    expect(cn.destroy(1, 1)).resolves.toBeTruthy();
+    expect(cn.destroy('esacrosa', 'api')).resolves.toBeTruthy();
   });
 
   test('should get the user data', () => {
@@ -136,6 +136,6 @@ describe(collectedNotes, () => {
 
   test('should reorder notes', () => {
     fetchMock.once(JSON.stringify([2, 3, 1]));
-    expect(cn.reorder(1, [2, 3, 1])).resolves.toEqual([2, 3, 1]);
+    expect(cn.reorder('esacrosa', [2, 3, 1])).resolves.toEqual([2, 3, 1]);
   });
 });

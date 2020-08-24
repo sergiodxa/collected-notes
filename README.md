@@ -30,7 +30,7 @@ Use it to read a single note:
 ### As JSON
 
 ```ts
-const note = await read('sergiodxa', 'using-collected-notes-as-cms', 'json');
+const note = await read('blog', 'api', 'json');
 ```
 
 The returned note will follow the `Note` interface.
@@ -38,7 +38,7 @@ The returned note will follow the `Note` interface.
 ### As Markdown
 
 ```ts
-const note = await read('sergiodxa', 'using-collected-notes-as-cms', 'md');
+const note = await read('blog', 'api', 'md');
 ```
 
 The returned note will be a string with the Markdown content.
@@ -46,7 +46,7 @@ The returned note will be a string with the Markdown content.
 ### As plain text
 
 ```ts
-const note = await read('sergiodxa', 'using-collected-notes-as-cms', 'txt');
+const note = await read('blog', 'api', 'txt');
 ```
 
 The returned note will be a string with the note content as plain text, without Markdown.
@@ -56,9 +56,9 @@ The returned note will be a string with the note content as plain text, without 
 Use it to get a site data with their public notes.
 
 ```ts
-const sitePath = 'sergiodxa';
+const sitePath = 'blog';
 const page = 1;
-const visibility = "public";
+const visibility = 'public';
 const siteData = await site(sitePath, page, visibility);
 ```
 
@@ -93,9 +93,9 @@ Each site of the list follows the `Site` interface.
 You can now get the latest notes, public and private, of a site based on their ID.
 
 ```ts
-const siteId = 1;
+const sitePath = 'blog';
 const page = 1; // default is 1
-const notes = await cn.latestNotes(siteId, page);
+const notes = await cn.latestNotes(sitePath, page);
 ```
 
 Each note of the list follows the `Note` interface.
@@ -105,12 +105,12 @@ Each note of the list follows the `Note` interface.
 You can use the client to create a new note for a site of the user:
 
 ```ts
-const siteId = 1; // optional, if missing the API will use your first site
+const sitePath = 'blog'; // optional, if missing the API will use your first site
 const noteContent = {
   body: '# Title\nContent of the note.',
   visiblity: 'private',
 };
-const note = await cn.create(noteContent, siteId);
+const note = await cn.create(noteContent, sitePath);
 ```
 
 The returned note follows the `Note` interface.
@@ -122,13 +122,13 @@ The returned note follows the `Note` interface.
 You can use the client to update an existant note:
 
 ```ts
-const siteId = 1;
-const noteId = 2;
+const sitePath = 'blog';
+const notePath = 'api';
 const noteContent = {
   body: '# Title\nNew content of the note.',
   visiblity: 'private',
 };
-const note = await cn.update(siteId, noteId, noteContent);
+const note = await cn.update(sitePath, notePath, noteContent);
 ```
 
 The returned note follows the `Note` interface.
@@ -140,9 +140,9 @@ The returned note follows the `Note` interface.
 You can use the client to delete a note:
 
 ```ts
-const siteId = 1;
-const noteId = 2;
-await cn.destroy(siteId, noteId);
+const sitePath = 'blog';
+const notePath = 'api';
+await cn.destroy(sitePath, notePath);
 ```
 
 The returned response is the same returned by the Fetch API, you can use `response.ok` or `response.statusCode` to check if the delete was successful.
@@ -162,9 +162,9 @@ The returned user follows the `User` interface.
 You can use the client to reorder your notes.
 
 ```ts
-const siteId = 1;
+const sitePath = 'blog';
 const notes: number[] = [2, 3, 1];
-const orderedIds = await cn.reorder(siteId, notes);
+const orderedIds = await cn.reorder(sitePath, notes);
 ```
 
 The returned orderedIds is an array of the ids in their new order, this will be the same as the notes argument.
@@ -174,10 +174,10 @@ The returned orderedIds is an array of the ids in their new order, this will be 
 You can use the client to search your notes.
 
 ```ts
-const sitePath = "blog";
+const sitePath = 'blog';
 const term = 'new content';
 const page = 1; // default is 1
-const visibility = "public"; // default is not defined
+const visibility = 'public'; // default is not defined
 const notes = await cn.search(sitePath, term, page, visibility);
 ```
 
@@ -186,9 +186,9 @@ const notes = await cn.search(sitePath, term, page, visibility);
 Get the rendered body of a note. This method is useful when you don't want to get the markdown or when you want to use custom Markdown syntax supported by Collected Notes (e.g. to embed [YouTube videos](https://collectednotes.com/blog/support-for-youtube) or [Tweets](https://collectednotes.com/blog/support-for-tweets))
 
 ```ts
-const siteId = 1;
-const noteId = 2;
-const { note, body } = await cn.body(siteId, noteId);
+const sitePath = 'blog';
+const notePath = 'api';
+const { note, body } = await cn.body(sitePath, notePath);
 ```
 
 ### Links
@@ -196,10 +196,10 @@ const { note, body } = await cn.body(siteId, noteId);
 Get the list of links that are contained in a note.
 
 ```ts
-const siteId = 1;
-const noteId = 2;
-const format = "json"; // or html, defualt is json
-const links = await cn.links(siteId, noteId, format);
+const sitePath = 'blog';
+const notePath = 'api';
+const format = 'json'; // or html, defualt is json
+const links = await cn.links(sitePath, notePath, format);
 ```
 
 ### Site and Read
@@ -207,8 +207,8 @@ const links = await cn.links(siteId, noteId, format);
 The private client also comes with the `read` and `site` methods used to get only public data. These methods are exactly the same ones and are being returned only for convenience so you could use them as:
 
 ```ts
-const { site, notes } = await cn.site('sergiodxa');
-const note = await cn.site('sergiodxa', 'using-collected-notes-as-cms', 'json');
+const { site, notes } = await cn.site('blog');
+const note = await cn.site('blog', 'api', 'json');
 ```
 
 ## Types

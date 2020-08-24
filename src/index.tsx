@@ -56,7 +56,7 @@ export type NoteVisibility =
   | 'private'
   | 'public'
   | 'public_unlisted'
-  | 'site_public';
+  | 'public_site';
 
 /**
  * The format a note can come in.
@@ -121,7 +121,7 @@ export type Note = {
    */
   updated_at: ISODate;
   /**
-   * The visibility of the note, it could be `private`, `public` or `public_unlisted`.
+   * The visibility of the note, it could be `private`, `public`, or `public_unlisted`, or `public_site`.
    * @type {NoteVisibility}
    */
   visibility: NoteVisibility;
@@ -384,15 +384,21 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {ID} siteId - The ID of the site, you can get it using the `sites` method
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
    * @param {number} [page=1] - The page of the results, by default is `1`
+   * @param {NoteVisibility} [visibility] - The page of the results, by default is `1`
    * @returns {Promise<Note[]>} - The list of notes
    */
-  async function latestNotes(siteId: ID, page: number = 1): Promise<Note[]> {
-    const response = await fetch(
-      `https://collectednotes.com/sites/${siteId}/notes?page=${page}`,
-      { headers }
-    );
+  async function latestNotes(
+    sitePath: string,
+    page: number = 1,
+    visibility?: NoteVisibility
+  ): Promise<Note[]> {
+    const url = visibility
+      ? `https://collectednotes.com/sites/${sitePath}/notes?page=${page}&visibility=${visibility}`
+      : `https://collectednotes.com/sites/${sitePath}/notes?page=${page}`;
+
+    const response = await fetch(url, { headers });
     return await response.json();
   }
 
@@ -416,17 +422,18 @@ export function collectedNotes(email: Email, token: string) {
    * @function
    * @async
    * @param {{ body: string; visibility: NoteVisibility }} note - The body and visibility of the new note
-   * @param {ID} [siteId] - The ID of the site, you can get it using the `sites` method, if not specified the note will be automatically added to the first site you have configured
+   * @param {string} [sitePath] - The path of the site (e.g. `blog`), if not specified the note will be automatically added to the first site you have configured
    * @returns {Promise<Note>} - The newly created note
    */
   async function create(
     note: { body: string; visibility: NoteVisibility },
-    siteId?: ID
+    sitePath?: string
   ): Promise<Note> {
     const { body, visibility } = note;
-    const url = siteId
-      ? `https://collectednotes.com/sites/${siteId}/notes`
+    const url = sitePath
+      ? `https://collectednotes.com/sites/${sitePath}/notes`
       : 'https://collectednotes.com/notes/add';
+
     const response = await fetch(url, {
       method: 'POST',
       headers,
@@ -442,19 +449,19 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {ID} siteId - The ID of the site, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, or `search` methods
+   * @param {string} sitePath - The path of the site (e.g.`blog`)
+   * @param {string} notePath - The path of the note (e.g. `api`)
    * @param {{ body: string; visibility: NoteVisibility }} note - The new body and visibility of the note
    * @returns {Promise<Note>} - The updated note data
    */
   async function update(
-    siteId: ID,
-    noteId: ID,
+    sitePath: string,
+    notePath: string,
     note: { body: string; visibility: NoteVisibility }
   ): Promise<Note> {
     const { body, visibility } = note;
     const response = await fetch(
-      `https://collectednotes.com/sites/${siteId}/notes/${noteId}`,
+      `https://collectednotes.com/sites/${sitePath}/notes/${notePath}`,
       {
         method: 'POST',
         headers,
@@ -469,15 +476,18 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {ID} siteId - The ID of the site, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
+   * @param {string} notePath - The path of the note (e.g. `api`)
    * @returns {Promise<void>} - This method returns nothing
    */
-  async function destroy(siteId: ID, noteId: ID): Promise<void> {
-    await fetch(`https://collectednotes.com/sites/${siteId}/notes/${noteId}`, {
-      headers,
-      method: 'DELETE',
-    });
+  async function destroy(sitePath: string, notePath: string): Promise<void> {
+    await fetch(
+      `https://collectednotes.com/sites/${sitePath}/notes/${notePath}`,
+      {
+        headers,
+        method: 'DELETE',
+      }
+    );
   }
 
   /**
@@ -499,13 +509,16 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {ID} siteId - The site ID, you can get it using the `sites` method
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
    * @param {ID[]} noteIdList - The sorted ids of the notes
    * @returns {Promise<number[]>} - The final sorted ids as stored in Collected Notes
    */
-  async function reorder(siteId: ID, noteIdList: ID[]): Promise<number[]> {
+  async function reorder(
+    sitePath: string,
+    noteIdList: ID[]
+  ): Promise<number[]> {
     const response = await fetch(
-      `https://collectednotes.com/sites/${siteId}/notes/reorder`,
+      `https://collectednotes.com/sites/${sitePath}/notes/reorder`,
       {
         method: 'POST',
         headers,
@@ -523,7 +536,7 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {string} sitePath - The path of the site, e.g. `blog`
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
    * @param {string} term - The search term, it will be encoded as a valid URI
    * @param {number} [page=1] - The page of the results, by default is `1`
    * @param {NoteVisibility} [visibility] - The visibility of the notes your are trying to search for
@@ -549,16 +562,16 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {ID} siteId - The site ID, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
+   * @param {string} notePath - The path of the note (e.g. `api`)
    * @returns {Promise<{ note:Note, body:HTML }>} - The note together with the HTML already parsed
    */
   async function body(
-    siteId: ID,
-    noteId: ID
+    sitePath: string,
+    notePath: string
   ): Promise<{ note: Note; body: HTML }> {
     const response = await fetch(
-      `https://collectednotes.com/sites/${siteId}/notes/${noteId}/body`,
+      `https://collectednotes.com/sites/${sitePath}/notes/${notePath}/body`,
       { method: 'GET', headers }
     );
     return await response.json();
@@ -569,24 +582,28 @@ export function collectedNotes(email: Email, token: string) {
    *
    * @function
    * @async
-   * @param {ID} siteId - The site ID, you can get it using the `sites` method
-   * @param {ID} noteId - The ID of the note, you can get it using the `latestNotes`, `create`, `update`, or `search` methods
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
+   * @param {string} notePath - The path of the note (e.g. `api`)
    * @param {('json' | 'html')} [format='json'] - The format you want to get the notes
    * @returns {Promise<Link[] | HTML>}
    */
   async function links(
-    siteId: ID,
-    noteId: ID,
+    sitePath: ID,
+    notePath: ID,
     format?: 'json'
   ): Promise<Link[]>;
-  async function links(siteId: ID, noteId: ID, format: 'html'): Promise<HTML>;
   async function links(
-    siteId: ID,
-    noteId: ID,
+    sitePath: ID,
+    notePath: ID,
+    format: 'html'
+  ): Promise<HTML>;
+  async function links(
+    sitePath: ID,
+    notePath: ID,
     format: 'json' | 'html' = 'json'
   ): Promise<Link[] | HTML> {
     const response = await fetch(
-      `https://collectednotes.com/sites/${siteId}/notes/${noteId}/links${
+      `https://collectednotes.com/sites/${sitePath}/notes/${notePath}/links${
         format === 'json' ? '.json' : ''
       }`,
       { method: 'GET', headers }
@@ -620,13 +637,13 @@ export function collectedNotes(email: Email, token: string) {
  * @async
  * @param {string} sitePath - The path of the site (e.g. `blog`)
  * @param {number} [page=1] - The page of the results, by default is `1`
- * @param {("public" | "site_public")} [visibility="public"] - The visibility of the notes you are trying to fetch.
+ * @param {("public" | "public_site")} [visibility="public"] - The visibility of the notes you are trying to fetch.
  * @returns {Promise<{ site: Site; notes: Note[] }>} - An object with the site and the list of notes
  */
 export async function site(
   sitePath: string,
   page: number = 1,
-  visibility: Extract<NoteVisibility, 'public' | 'site_public'> = 'public'
+  visibility: Extract<NoteVisibility, 'public' | 'public_site'> = 'public'
 ): Promise<{ site: Site; notes: Note[] }> {
   const response = await fetch(
     `https://collectednotes.com/${sitePath}.json?page=${page}&visibility=${visibility}`
