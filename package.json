@@ -35,15 +35,8 @@
   },
   "devDependencies": {
     "husky": "^4.2.5",
-    "jest-fetch-mock": "^3.0.3",
     "tsdx": "^0.13.2",
     "tslib": "^2.0.0",
     "typescript": "^4.0.2"
-  },
-  "dependencies": {},
-  "jest": {
-    "setupFilesAfterEnv": [
-      "./test/setup.ts"
-    ]
   }
 }
