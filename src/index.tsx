@@ -571,7 +571,7 @@ export function collectedNotes(email: Email, token: string) {
     notePath: string
   ): Promise<{ note: Note; body: HTML }> {
     const response = await fetch(
-      `https://collectednotes.com/sites/${sitePath}/notes/${notePath}/body`,
+      `https://collectednotes.com/${sitePath}/${notePath}/body`,
       { method: 'GET', headers }
     );
     return await response.json();
