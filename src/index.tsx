@@ -588,18 +588,18 @@ export function collectedNotes(email: Email, token: string) {
    * @returns {Promise<Link[] | HTML>}
    */
   async function links(
-    sitePath: ID,
-    notePath: ID,
+    sitePath: string,
+    notePath: string,
     format?: 'json'
   ): Promise<Link[]>;
   async function links(
-    sitePath: ID,
-    notePath: ID,
+    sitePath: string,
+    notePath: string,
     format: 'html'
   ): Promise<HTML>;
   async function links(
-    sitePath: ID,
-    notePath: ID,
+    sitePath: string,
+    notePath: string,
     format: 'json' | 'html' = 'json'
   ): Promise<Link[] | HTML> {
     const response = await fetch(
