@@ -5,9 +5,9 @@ const fakeNote: Note = {
   site_id: 1,
   user_id: 1,
   body: '# My title\nThis is a **test** note',
-  path: 'suerte',
+  path: 'api',
   headline: 'This is a test note',
-  title: 'Suerte',
+  title: 'API Reference',
   created_at: new Date().toJSON(),
   updated_at: new Date().toJSON(),
   visibility: 'public',
@@ -26,7 +26,7 @@ const fakeSite: Site = {
   host: '',
   created_at: new Date().toJSON(),
   updated_at: new Date().toJSON(),
-  site_path: 'esacrosa',
+  site_path: 'blog',
   published: true,
   tinyletter: '',
   domain: '',
@@ -50,7 +50,7 @@ const fakeUser: User = {
 describe(site, () => {
   test('should get site data', () => {
     fetchMock.once(JSON.stringify({ site: fakeSite, notes: [fakeNote] }));
-    expect(site('esacrosa')).resolves.toEqual({
+    expect(site('blog')).resolves.toEqual({
       site: fakeSite,
       notes: [fakeNote],
     });
@@ -60,24 +60,24 @@ describe(site, () => {
 describe(read, () => {
   test('should get data as JSON by default', () => {
     fetchMock.once(JSON.stringify(fakeNote));
-    expect(read('esacrosa', 'suerte')).resolves.toEqual(fakeNote);
+    expect(read('blog', 'api')).resolves.toEqual(fakeNote);
   });
 
   test('should get data as JSON', () => {
     fetchMock.once(JSON.stringify(fakeNote));
-    expect(read('esacrosa', 'suerte', 'json')).resolves.toEqual(fakeNote);
+    expect(read('blog', 'api', 'json')).resolves.toEqual(fakeNote);
   });
 
   test('Should get data as markdown', () => {
     fetchMock.once('# My title\nThis is a **test** note');
-    expect(read('esacrosa', 'suerte', 'md')).resolves.toBe(
+    expect(read('blog', 'api', 'md')).resolves.toBe(
       '# My title\nThis is a **test** note'
     );
   });
 
   test('should get data as plain text', () => {
     fetchMock.once('My title\n========\n\nThis is a test note');
-    expect(read('esacrosa', 'suerte', 'md')).resolves.toBe(
+    expect(read('blog', 'api', 'md')).resolves.toBe(
       'My title\n========\n\nThis is a test note'
     );
   });
@@ -93,12 +93,12 @@ describe(collectedNotes, () => {
 
   test('should get last notes', () => {
     fetchMock.once(JSON.stringify([fakeNote]));
-    expect(cn.latestNotes('esacrosa')).resolves.toEqual([fakeNote]);
+    expect(cn.latestNotes('blog')).resolves.toEqual([fakeNote]);
   });
 
   test('should get user sites', () => {
     fetchMock.once(JSON.stringify([fakeSite]));
-    expect(site('esacrosa')).resolves.toEqual([fakeSite]);
+    expect(site('blog')).resolves.toEqual([fakeSite]);
   });
 
   test('should create a note', () => {
@@ -109,7 +109,7 @@ describe(collectedNotes, () => {
           body: '# My title\nThis is a **test** note',
           visibility: 'public',
         },
-        1
+        'blog'
       )
     ).resolves.toEqual(fakeNote);
   });
@@ -117,7 +117,7 @@ describe(collectedNotes, () => {
   test('should update a note', () => {
     fetchMock.once(JSON.stringify(fakeNote));
     expect(
-      cn.update('esacrosa', 'api', {
+      cn.update('blog', 'api', {
         body: '# My title\nThis is a **test** note',
         visibility: 'public',
       })
@@ -126,7 +126,7 @@ describe(collectedNotes, () => {
 
   test('should destroy a note', () => {
     fetchMock.once('');
-    expect(cn.destroy('esacrosa', 'api')).resolves.toBeTruthy();
+    expect(cn.destroy('blog', 'api')).resolves.toBeTruthy();
   });
 
   test('should get the user data', () => {
@@ -136,6 +136,6 @@ describe(collectedNotes, () => {
 
   test('should reorder notes', () => {
     fetchMock.once(JSON.stringify([2, 3, 1]));
-    expect(cn.reorder('esacrosa', [2, 3, 1])).resolves.toEqual([2, 3, 1]);
+    expect(cn.reorder('blog', [2, 3, 1])).resolves.toEqual([2, 3, 1]);
   });
 });
