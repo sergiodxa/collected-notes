@@ -611,6 +611,30 @@ export function collectedNotes(email: Email, token: string) {
     return await response.json();
   }
 
+  /**
+   * Get the data of a site and their public notes.
+   * This method is public and doesn't require authentication.
+   * _This API is paginated._
+   *
+   * @function
+   * @async
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
+   * @param {number} [page=1] - The page of the results, by default is `1`
+   * @param {NoteVisibility} [visibility] - The visibility of the notes you are trying to fetch.
+   * @returns {Promise<{ site: Site; notes: Note[] }>} - An object with the site and the list of notes
+   */
+  async function site(
+    sitePath: string,
+    page: number = 1,
+    visibility?: NoteVisibility
+  ): Promise<{ site: Site; notes: Note[] }> {
+    const url = visibility
+      ? `https://collectednotes.com/${sitePath}.json?page=${page}&visibility=${visibility}`
+      : `https://collectednotes.com/${sitePath}.json?page=${page}`;
+    const response = await fetch(url, { method: 'GET', headers });
+    return await response.json();
+  }
+
   return {
     latestNotes,
     sites,
@@ -637,18 +661,13 @@ export function collectedNotes(email: Email, token: string) {
  * @async
  * @param {string} sitePath - The path of the site (e.g. `blog`)
  * @param {number} [page=1] - The page of the results, by default is `1`
- * @param {("public" | "public_site")} [visibility="public"] - The visibility of the notes you are trying to fetch.
  * @returns {Promise<{ site: Site; notes: Note[] }>} - An object with the site and the list of notes
  */
 export async function site(
   sitePath: string,
-  page: number = 1,
-  visibility?: Extract<NoteVisibility, 'public' | 'public_site'>
+  page: number = 1
 ): Promise<{ site: Site; notes: Note[] }> {
-  const url = visibility
-    ? `https://collectednotes.com/${sitePath}.json?page=${page}&visibility=${visibility}`
-    : `https://collectednotes.com/${sitePath}.json?page=${page}`;
-  console.log(url);
+  const url = `https://collectednotes.com/${sitePath}.json?page=${page}`;
   const response = await fetch(url);
   return await response.json();
 }
