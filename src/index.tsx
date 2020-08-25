@@ -463,7 +463,7 @@ export function collectedNotes(email: Email, token: string) {
     const response = await fetch(
       `https://collectednotes.com/${sitePath}/${notePath}`,
       {
-        method: 'POST',
+        method: 'PUT',
         headers,
         body: JSON.stringify({ note: { body, visibility } }),
       }
