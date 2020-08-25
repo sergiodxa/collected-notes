@@ -643,11 +643,13 @@ export function collectedNotes(email: Email, token: string) {
 export async function site(
   sitePath: string,
   page: number = 1,
-  visibility: Extract<NoteVisibility, 'public' | 'public_site'> = 'public'
+  visibility?: Extract<NoteVisibility, 'public' | 'public_site'>
 ): Promise<{ site: Site; notes: Note[] }> {
-  const response = await fetch(
-    `https://collectednotes.com/${sitePath}.json?page=${page}&visibility=${visibility}`
-  );
+  const url = visibility
+    ? `https://collectednotes.com/${sitePath}.json?page=${page}&visibility=${visibility}`
+    : `https://collectednotes.com/${sitePath}.json?page=${page}`;
+  console.log(url);
+  const response = await fetch(url);
   return await response.json();
 }
 
