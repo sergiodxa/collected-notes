@@ -356,6 +356,11 @@ export type Link = {
   updated_at: ISODate;
 };
 
+const basicHeaders = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+};
+
 /**
  * Create a new client of the API to consume the private endpoints.
  *
@@ -369,11 +374,7 @@ export type Link = {
  * @returns
  */
 export function collectedNotes(email: Email, token: string) {
-  const headers = {
-    Authorization: `${email} ${token}`,
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  };
+  const headers = { Authorization: `${email} ${token}`, ...basicHeaders };
 
   /**
    * Get the latest notes of a Collected Notes site.
@@ -668,7 +669,7 @@ export async function site(
   page: number = 1
 ): Promise<{ site: Site; notes: Note[] }> {
   const url = `https://collectednotes.com/${sitePath}.json?page=${page}`;
-  const response = await fetch(url);
+  const response = await fetch(url, { headers: basicHeaders });
   return await response.json();
 }
 
@@ -726,4 +727,25 @@ export async function read(
       return await response.text();
     }
   }
+}
+
+/**
+ * Get a note with the body rendered as HTML.
+ *
+ * @export
+ * @function
+ * @async
+ * @param {string} sitePath - The path of the site (e.g. `blog`)
+ * @param {string} notePath - The path of the note (e.g. `api`)
+ * @returns {Promise<{ note:Note, body:HTML }>} - The note together with the HTML already parsed
+ */
+export async function body(
+  sitePath: string,
+  notePath: string
+): Promise<{ note: Note; body: HTML }> {
+  const response = await fetch(
+    `https://collectednotes.com/${sitePath}/${notePath}/body`,
+    { headers: basicHeaders }
+  );
+  return await response.json();
 }
