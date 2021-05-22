@@ -30,7 +30,7 @@ Use it to read a single note:
 ### As JSON
 
 ```ts
-const note = await read('blog', 'api', 'json');
+let note = await read('blog', 'api', 'json');
 ```
 
 The returned note will follow the `Note` interface.
@@ -38,7 +38,7 @@ The returned note will follow the `Note` interface.
 ### As Markdown
 
 ```ts
-const note = await read('blog', 'api', 'md');
+let note = await read('blog', 'api', 'md');
 ```
 
 The returned note will be a string with the Markdown content.
@@ -46,7 +46,7 @@ The returned note will be a string with the Markdown content.
 ### As plain text
 
 ```ts
-const note = await read('blog', 'api', 'txt');
+let note = await read('blog', 'api', 'txt');
 ```
 
 The returned note will be a string with the note content as plain text, without Markdown.
@@ -56,10 +56,10 @@ The returned note will be a string with the note content as plain text, without 
 Use it to get a site data with their public notes.
 
 ```ts
-const sitePath = 'blog';
-const page = 1;
-const visibility = 'public';
-const siteData = await site(sitePath, page, visibility);
+let sitePath = 'blog';
+let page = 1;
+let visibility = 'public';
+let siteData = await site(sitePath, page, visibility);
 ```
 
 The return value will be an object with the format:
@@ -75,7 +75,7 @@ To use the private API, first, get your API token from https://collectednotes.co
 Now create a new client instance with:
 
 ```ts
-const cn = collectedNotes('your@email.com', 'your-api-token');
+let cn = collectedNotes('your@email.com', 'your-api-token');
 ```
 
 ### List of Sites
@@ -83,7 +83,7 @@ const cn = collectedNotes('your@email.com', 'your-api-token');
 Get the list of sites of the logged-in user.
 
 ```ts
-const sites = await cn.sites();
+let sites = await cn.sites();
 ```
 
 Each site of the list follows the `Site` interface.
@@ -93,9 +93,9 @@ Each site of the list follows the `Site` interface.
 You can now get the latest notes, public and private, of a site based on their ID.
 
 ```ts
-const sitePath = 'blog';
-const page = 1; // default is 1
-const notes = await cn.latestNotes(sitePath, page);
+let sitePath = 'blog';
+let page = 1; // default is 1
+let notes = await cn.latestNotes(sitePath, page);
 ```
 
 Each note of the list follows the `Note` interface.
@@ -105,12 +105,12 @@ Each note of the list follows the `Note` interface.
 You can use the client to create a new note for a site of the user:
 
 ```ts
-const sitePath = 'blog'; // optional, if missing the API will use your first site
-const noteContent = {
+let sitePath = 'blog'; // optional, if missing the API will use your first site
+let noteContent = {
   body: '# Title\nContent of the note.',
   visiblity: 'private',
 };
-const note = await cn.create(noteContent, sitePath);
+let note = await cn.create(noteContent, sitePath);
 ```
 
 The returned note follows the `Note` interface.
@@ -122,13 +122,13 @@ The returned note follows the `Note` interface.
 You can use the client to update an existant note:
 
 ```ts
-const sitePath = 'blog';
-const notePath = 'api';
-const noteContent = {
+let sitePath = 'blog';
+let notePath = 'api';
+let noteContent = {
   body: '# Title\nNew content of the note.',
   visiblity: 'private',
 };
-const note = await cn.update(sitePath, notePath, noteContent);
+let note = await cn.update(sitePath, notePath, noteContent);
 ```
 
 The returned note follows the `Note` interface.
@@ -140,8 +140,8 @@ The returned note follows the `Note` interface.
 You can use the client to delete a note:
 
 ```ts
-const sitePath = 'blog';
-const notePath = 'api';
+let sitePath = 'blog';
+let notePath = 'api';
 await cn.destroy(sitePath, notePath);
 ```
 
@@ -152,7 +152,7 @@ The returned response is the same returned by the Fetch API, you can use `respon
 You can use the client to get the user data.
 
 ```ts
-const user = await cn.me();
+let user = await cn.me();
 ```
 
 The returned user follows the `User` interface.
@@ -162,9 +162,9 @@ The returned user follows the `User` interface.
 You can use the client to reorder your notes.
 
 ```ts
-const sitePath = 'blog';
-const notes: number[] = [2, 3, 1];
-const orderedIds = await cn.reorder(sitePath, notes);
+let sitePath = 'blog';
+let notes: number[] = [2, 3, 1];
+let orderedIds = await cn.reorder(sitePath, notes);
 ```
 
 The returned orderedIds is an array of the ids in their new order, this will be the same as the notes argument.
@@ -174,11 +174,11 @@ The returned orderedIds is an array of the ids in their new order, this will be 
 You can use the client to search your notes.
 
 ```ts
-const sitePath = 'blog';
-const term = 'new content';
-const page = 1; // default is 1
-const visibility = 'public'; // default is not defined
-const notes = await cn.search(sitePath, term, page, visibility);
+let sitePath = 'blog';
+let term = 'new content';
+let page = 1; // default is 1
+let visibility = 'public'; // default is not defined
+let notes = await cn.search(sitePath, term, page, visibility);
 ```
 
 ### Body
@@ -186,9 +186,9 @@ const notes = await cn.search(sitePath, term, page, visibility);
 Get the rendered body of a note. This method is useful when you don't want to get the markdown or when you want to use custom Markdown syntax supported by Collected Notes (e.g. to embed [YouTube videos](https://collectednotes.com/blog/support-for-youtube) or [Tweets](https://collectednotes.com/blog/support-for-tweets))
 
 ```ts
-const sitePath = 'blog';
-const notePath = 'api';
-const { note, body } = await cn.body(sitePath, notePath);
+let sitePath = 'blog';
+let notePath = 'api';
+let { note, body } = await cn.body(sitePath, notePath);
 ```
 
 ### Links
@@ -196,10 +196,10 @@ const { note, body } = await cn.body(sitePath, notePath);
 Get the list of links that are contained in a note.
 
 ```ts
-const sitePath = 'blog';
-const notePath = 'api';
-const format = 'json'; // or html, defualt is json
-const links = await cn.links(sitePath, notePath, format);
+let sitePath = 'blog';
+let notePath = 'api';
+let format = 'json'; // or html, default is json
+let links = await cn.links(sitePath, notePath, format);
 ```
 
 ### Site and Read
@@ -207,9 +207,41 @@ const links = await cn.links(sitePath, notePath, format);
 The private client also comes with the `read` and `site` methods used to get only public data. These methods are exactly the same ones and are being returned only for convenience so you could use them as:
 
 ```ts
-const { site, notes } = await cn.site('blog');
-const note = await cn.site('blog', 'api', 'json');
+let { site, notes } = await cn.site('blog');
+let note = await cn.site('blog', 'api', 'json');
 ```
+
+### Feed
+
+You can generate a JSON feed for your Collected Notes site using the `feed` function.
+
+```ts
+let sitePath = 'blog';
+let visibility = 'public_site';
+let feedOptions = {
+  home_page_url: 'https://example.com',
+  feed_url: 'https://example.com/feed.json',
+};
+let format = 'json'; // default is JSON
+// the result is a JSONFeed object as defined in the types below
+let jsonFeed = await cn.site(sitePath, visibility, feedOptions, format);
+```
+
+You can generate an XML (aka RSS) feed for your Collected Notes site using the `feed` function.
+
+```ts
+let sitePath = 'blog';
+let visibility = 'public_site';
+let feedOptions = {
+  home_page_url: 'https://example.com',
+  feed_url: 'https://example.com/feed.json',
+};
+let format = 'xml'; // default is JSON
+// the result is a string with the XML required to build a valid RSS feed
+let xmlFeed = await cn.site(sitePath, visibility, feedOptions, format);
+```
+
+Note this function will run a call to get tha site information with the first page (only one page), the user information to get the author data and the HTML body of each note receives. In a site with 40 notes (max for one page) this will run 42 HTTP requests. Nevertheless, the first two are in parallel and the other dynamic amount are are run at the same time.
 
 ## Types
 
@@ -219,11 +251,15 @@ You can also import the interfaces of the values returned by the API or the webh
 import {
   ID,
   Markdown,
+  HTML,
+  XML,
   URL,
   Email,
   ISODate,
   NoteVisibility,
   NoteFormat,
+  FeedFormat,
+  JSONFeed,
   Note,
   Site,
   User,
@@ -241,11 +277,15 @@ You can then use them to type any function in case TS is not capable to get the 
 
 - `ID` — alias of number
 - `Markdown` — alias of string
+- `HTML` — alias of string
+- `XML` — alias of string
 - `URL` — alias of string
 - `Email` — alias of string
 - `ISODate` — alias of string
-- `NoteVisibility` — union of strings
-- `NoteFormat` — union of strings
+- `NoteVisibility` — "private" or "public" or "public_unlisted" or "public_site"
+- `NoteFormat` — "md" or "txt" or "json"
+- `FeedFormat` — "xml" or "json"
+- `JSONFeed` — The type of a JSON feed
 - `Note` — The type of a note
 - `Site` — The type of a site
 - `User` — The type of a user

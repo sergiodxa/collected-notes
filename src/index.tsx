@@ -17,6 +17,12 @@ export type Markdown = string;
 export type HTML = string;
 
 /**
+ * A string containing XML
+ * @export
+ */
+export type XML = string;
+
+/**
  * A valid URL string.
  * @export
  */
@@ -63,6 +69,121 @@ export type NoteVisibility =
  * @export
  */
 export type NoteFormat = 'md' | 'txt' | 'json';
+
+/**
+ * The format an RSS can come in.
+ * @export
+ */
+export type FeedFormat = 'xml' | 'json';
+
+export type JSONFeed = {
+  /**
+   * Is the URL of the version of the format the feed uses. This should appear
+   * at the very top, though we recognize that not all JSON generators allow
+   * for ordering.
+   */
+  version: string;
+  /**
+   * Is the name of the feed, which will often correspond to the name of the
+   * website (blog, for instance), though not necessarily.
+   */
+  title: string;
+  /**
+   * Is the URL of the resource that the feed describes. This resource may or
+   * may not actually be a “home” page, but it should be an HTML page. If a
+   * feed is published on the public web, this should be considered as
+   * required. But it may not make sense in the case of a file created on a
+   * desktop computer, when that file is not shared or is shared only privately.
+   */
+  home_page_url?: string;
+  /**
+   * Is the URL of the feed, and serves as the unique identifier for the feed.
+   * As with home_page_url, this should be considered required for feeds on the
+   * public web.
+   */
+  feed_url?: string;
+  /**
+   * Provides more detail, beyond the title, on what the feed is about. A feed
+   * reader may display this text.
+   */
+  description?: string;
+  /**
+   * Specifies the feed author. The author object has several members. These
+   * are all optional — but if you provide an author object, then at least one
+   * is required.
+   */
+  author?: {
+    /**
+     * The author’s name
+     */
+    name?: string;
+    /**
+     * Is the URL for an image for the author. As with icon, it should be
+     * square and relatively large — such as 512 x 512 — and should use
+     * transparency where appropriate, since it may be rendered on a non-white
+     * background.
+     */
+    avatar?: string;
+  };
+  items: Array<{
+    /**
+     * Is unique for that item for that feed over time. If an item is ever
+     * updated, the id should be unchanged. New items should never use a
+     * previously-used id. If an id is presented as a number or other type, a
+     * JSON Feed reader must coerce it to a string. Ideally, the id is the full
+     * URL of the resource described by the item, since URLs make great unique
+     * identifiers
+     */
+    id: string;
+    /**
+     * Is the URL of the resource described by the item. It’s the permalink.
+     * This may be the same as the id — but should be present regardless.
+     */
+    url?: string;
+    /**
+     * Is plain text. Microblog items in particular may omit titles
+     */
+    title?: string;
+    /**
+     * A Twitter-like service might use content_text, while a blog might use
+     * content_html. Use whichever makes sense for your resource. (It doesn’t
+     * even have to be the same for each item in a feed.)
+     */
+    content_text?: string;
+    /**
+     * This is the HTML of the item. Important: the only place
+     * HTML is allowed in this format is in content_html.
+     */
+    content_html?: string;
+    /**
+     * Is a plain text sentence or two describing the item. This might be
+     * prsented in a timeline, for instance, where a detail view would display
+     * all of content_html or content_text.
+     */
+    summary?: string;
+    /**
+     * Is the URL of the main image for the item. This image may also appear in
+     * the content_html — if so, it’s a hint to the feed reader that this is
+     * the main, featured image. Feed readers may use the image as a preview
+     * (probably resized as a thumbnail and placed in a timeline).
+     */
+    image?: string;
+    /**
+     * specifies the date in RFC 3339 format. (Example:
+     * 2010-02-07T14:04:00-05:00.)
+     */
+    date_published?: string;
+    /**
+     * Specifies the modification date in RFC 3339 format.
+     */
+    date_modified?: string;
+  }>;
+};
+
+export type FeedOptions = {
+  homePageUrl: string;
+  feedUrl: string;
+};
 
 /**
  * A note inside Collected Notes.
@@ -374,7 +495,10 @@ const basicHeaders = {
  * @returns
  */
 export function collectedNotes(email: Email, token: string) {
-  const headers = { Authorization: `${email} ${token}`, ...basicHeaders };
+  const headers = {
+    Authorization: `${email} ${token}`,
+    ...basicHeaders,
+  };
 
   /**
    * Get the latest notes of a Collected Notes site.
@@ -427,7 +551,10 @@ export function collectedNotes(email: Email, token: string) {
    * @returns {Promise<Note>} - The newly created note
    */
   async function create(
-    note: { body: string; visibility: NoteVisibility },
+    note: {
+      body: string;
+      visibility: NoteVisibility;
+    },
     sitePath?: string
   ): Promise<Note> {
     const { body, visibility } = note;
@@ -438,7 +565,12 @@ export function collectedNotes(email: Email, token: string) {
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ note: { body, visibility } }),
+      body: JSON.stringify({
+        note: {
+          body,
+          visibility,
+        },
+      }),
     });
     return await response.json();
   }
@@ -458,7 +590,10 @@ export function collectedNotes(email: Email, token: string) {
   async function update(
     sitePath: string,
     notePath: string,
-    note: { body: string; visibility: NoteVisibility }
+    note: {
+      body: string;
+      visibility: NoteVisibility;
+    }
   ): Promise<Note> {
     const { body, visibility } = note;
     const response = await fetch(
@@ -466,7 +601,12 @@ export function collectedNotes(email: Email, token: string) {
       {
         method: 'PUT',
         headers,
-        body: JSON.stringify({ note: { body, visibility } }),
+        body: JSON.stringify({
+          note: {
+            body,
+            visibility,
+          },
+        }),
       }
     );
     return await response.json();
@@ -523,7 +663,9 @@ export function collectedNotes(email: Email, token: string) {
       {
         method: 'POST',
         headers,
-        body: JSON.stringify({ ids: noteIdList }),
+        body: JSON.stringify({
+          ids: noteIdList,
+        }),
       }
     );
     return await response.json();
@@ -554,7 +696,10 @@ export function collectedNotes(email: Email, token: string) {
       ? `https://collectednotes.com/sites/${sitePath}/notes/search?term=${encodedTerm}&page=${page}&visibility=${visibility}`
       : `https://collectednotes.com/sites/${sitePath}/notes/search?term=${encodedTerm}&page=${page}`;
 
-    const response = await fetch(url, { method: 'GET', headers });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+    });
     return await response.json();
   }
 
@@ -570,10 +715,16 @@ export function collectedNotes(email: Email, token: string) {
   async function body(
     sitePath: string,
     notePath: string
-  ): Promise<{ note: Note; body: HTML }> {
+  ): Promise<{
+    note: Note;
+    body: HTML;
+  }> {
     const response = await fetch(
       `https://collectednotes.com/${sitePath}/${notePath}/body`,
-      { method: 'GET', headers }
+      {
+        method: 'GET',
+        headers,
+      }
     );
     return await response.json();
   }
@@ -607,7 +758,10 @@ export function collectedNotes(email: Email, token: string) {
       `https://collectednotes.com/sites/${sitePath}/notes/${notePath}/links${
         format === 'json' ? '.json' : ''
       }`,
-      { method: 'GET', headers }
+      {
+        method: 'GET',
+        headers,
+      }
     );
     return await response.json();
   }
@@ -628,12 +782,102 @@ export function collectedNotes(email: Email, token: string) {
     sitePath: string,
     page: number = 1,
     visibility?: NoteVisibility
-  ): Promise<{ site: Site; notes: Note[] }> {
+  ): Promise<{
+    site: Site;
+    notes: Note[];
+  }> {
     const url = visibility
       ? `https://collectednotes.com/${sitePath}.json?page=${page}&visibility=${visibility}`
       : `https://collectednotes.com/${sitePath}.json?page=${page}`;
-    const response = await fetch(url, { method: 'GET', headers });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+    });
     return await response.json();
+  }
+
+  /**
+   *
+   * @param {string} sitePath - The path of the site (e.g. `blog`)
+   * @param {NoteVisibility} [visibility] - The visibility of the notes you are
+   * @param {Pick<JSONFeed, 'home_page_url' | 'feed_url'>} feedOptions - Extra information required to build the feed
+   * @param {('json' | 'xml')} [format='json'] - The format you want to get the feed
+   */
+  async function feed(
+    sitePath: string,
+    visibility: NoteVisibility,
+    feedOptions: Pick<JSONFeed, 'home_page_url' | 'feed_url'>,
+    format: 'json'
+  ): Promise<JSONFeed>;
+  async function feed(
+    sitePath: string,
+    visibility: NoteVisibility,
+    feedOptions: Pick<JSONFeed, 'home_page_url' | 'feed_url'>,
+    format: 'xml'
+  ): Promise<XML>;
+  async function feed(
+    sitePath: string,
+    visibility: NoteVisibility,
+    feedOptions: Pick<JSONFeed, 'home_page_url' | 'feed_url'>,
+    format: FeedFormat = 'json'
+  ): Promise<JSONFeed | XML> {
+    let [{ notes, site: siteInfo }, user] = await Promise.all([
+      site(sitePath, 1, visibility),
+      me(),
+    ]);
+
+    let noteBodies = await Promise.all(
+      notes.map(note => body(sitePath, note.path))
+    );
+
+    let feed: JSONFeed = {
+      version: 'https://jsonfeed.org/version/1',
+      title: siteInfo.name,
+      ...feedOptions,
+      author: {
+        name: user.name,
+        avatar: user.avatar_key,
+      },
+      items: noteBodies.map(({ note, body }) => {
+        let url = new URL(note.path, feedOptions.home_page_url);
+        return {
+          id: note.id.toString(),
+          url: url.toString(),
+          title: note.title,
+          content_text: note.body,
+          content_html: body,
+          date_published: note.created_at,
+          date_modified: note.updated_at,
+          image: note.poster ?? undefined,
+          summary: note.headline,
+        };
+      }),
+    };
+
+    if (format === 'json') return feed;
+
+    return `
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <rss version="2.0">
+      <channel>
+        <title>${siteInfo.name}</title>
+        <description>${siteInfo.headline}</description>
+        <link>${feedOptions.home_page_url}</link>
+        <lastBuildDate>${new Date().toString()}</lastBuildDate>
+        <pubDate>${new Date().toString()}</pubDate>
+        ${feed.items.map(item => {
+          return `
+            <item>
+              <title>${item.title}</title>
+              <link>${item.url}</link>
+              <pubDate>${item.date_published}</pubDate>
+              <description>${item.summary}</description>
+            </item>
+          `;
+        })}
+      </channel>
+    </rss>
+    `;
   }
 
   return {
@@ -649,6 +893,7 @@ export function collectedNotes(email: Email, token: string) {
     search,
     body,
     links,
+    feed,
   } as const;
 }
 
