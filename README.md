@@ -234,7 +234,7 @@ let sitePath = 'blog';
 let visibility = 'public_site';
 let feedOptions = {
   home_page_url: 'https://example.com',
-  feed_url: 'https://example.com/feed.json',
+  feed_url: 'https://example.com/feed.xml',
 };
 let format = 'xml'; // default is JSON
 // the result is a string with the XML required to build a valid RSS feed
